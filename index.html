@@ -1,25 +1,12 @@
 <!doctype html>
 <html lang="fr">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Suivi multi-événements</title>
   <link rel="stylesheet" href="https://assets.bouyguestelecom.fr/TRILOGY/trilogy-styles@4.10.0/default/trilogy.css">
-  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <div class="field">
-    <label class="text is-level-6">Est ce que mon événements doit étre vu par</label>
-    <div class="select">
-      <select id="eventVisibility">
-        <option value="public">🌍 Tout le monde</option>
-        <option value="private">🔒 Moi uniquement</option>
-      </select>
-    </div>
-  </div>
-
   <div class="full-page">
     <div class="card">
       <div class="card-content">
@@ -28,6 +15,12 @@
         <div class="field is-grouped is-grouped-multiline">
           <input id="eventName" type="text" class="input" placeholder="Nom de l’événement" />
           <input id="eventDate" type="datetime-local" class="input" />
+          <div class="select">
+            <select id="eventVisibility">
+              <option value="public">🌍 Tout le monde</option>
+              <option value="private">🔒 Moi uniquement</option>
+            </select>
+          </div>
           <button id="addEventBtn" class="button is-primary">Ajouter</button>
         </div>
 
@@ -47,9 +40,13 @@
 
     const eventNameInput = document.getElementById('eventName');
     const eventDateInput = document.getElementById('eventDate');
+    const eventVisibilityInput = document.getElementById('eventVisibility');
     const addEventBtn = document.getElementById('addEventBtn');
     const searchInput = document.getElementById('searchInput');
     const eventList = document.getElementById('eventList');
+
+    const currentUser = localStorage.getItem('userId') || crypto.randomUUID();
+    localStorage.setItem('userId', currentUser);
 
     let events = [];
 
@@ -87,7 +84,7 @@
       const h = Math.floor(s / 3600);
       const m = Math.floor((s % 3600) / 60);
       const sec = s % 60;
-      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+      return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
     }
 
     function renderEvents() {
@@ -96,6 +93,7 @@
       const query = searchInput.value.trim().toLowerCase();
 
       events.forEach((ev, index) => {
+        if (ev.visibility === 'private' && ev.owner !== currentUser) return;
         if (query && !ev.name.toLowerCase().includes(query)) return;
 
         const end = new Date(ev.date);
@@ -114,6 +112,7 @@
           <p class="text">Temps restant : ${formatTime(remaining)}</p>
           <progress class="progress is-info" value="${pct}" max="100"></progress>
           <p class="text">${pct}% écoulé</p>
+          <p class="text is-small">Visibilité : ${ev.visibility === 'public' ? '🌍 Public' : '🔒 Privé'}</p>
           <button class="button is-danger is-small" onclick="deleteEvent(${index})">Supprimer</button>
         `;
         eventList.appendChild(container);
@@ -129,9 +128,17 @@
     addEventBtn.addEventListener('click', async () => {
       const name = eventNameInput.value.trim();
       const date = eventDateInput.value;
+      const visibility = eventVisibilityInput.value;
       if (!name || !date) return;
 
-      events.push({ name, date, created: new Date().toISOString() });
+      events.push({
+        name,
+        date,
+        created: new Date().toISOString(),
+        visibility,
+        owner: currentUser
+      });
+
       await saveEvents();
       renderEvents();
       eventNameInput.value = '';
@@ -149,5 +156,4 @@
     init();
   </script>
 </body>
-
 </html>
