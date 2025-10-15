@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="fr">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -7,7 +8,18 @@
   <link rel="stylesheet" href="https://assets.bouyguestelecom.fr/TRILOGY/trilogy-styles@4.10.0/default/trilogy.css">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+  <div class="field">
+    <label class="text is-level-6">Est ce que mon événements doit étre vu par</label>
+    <div class="select">
+      <select id="eventVisibility">
+        <option value="public">🌍 Tout le monde</option>
+        <option value="private">🔒 Moi uniquement</option>
+      </select>
+    </div>
+  </div>
+
   <div class="full-page">
     <div class="card">
       <div class="card-content">
@@ -29,8 +41,8 @@
   </div>
 
   <script>
-    const BIN_ID = '68efa73180b27952c6e75992';
-    const API_KEY = '$2a$10$8kkxIG1oGa2QqCdiKavcmeBjHR0IyL6nb.LIrm5wipMHoxOcZ412.';
+    const BIN_ID = '68efad29d0ea881f40a4987f';
+    const API_KEY = '$2a$10$jj5y/8wkKDtKzK8xN4ITEuT27TAx4/iKc5qYHz1Kx.eEnYFGdZqBi';
     const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
     const eventNameInput = document.getElementById('eventName');
@@ -75,7 +87,7 @@
       const h = Math.floor(s / 3600);
       const m = Math.floor((s % 3600) / 60);
       const sec = s % 60;
-      return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
     }
 
     function renderEvents() {
@@ -137,5 +149,5 @@
     init();
   </script>
 </body>
-</html>
 
+</html>
