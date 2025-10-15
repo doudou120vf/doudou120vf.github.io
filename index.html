@@ -34,7 +34,7 @@
   </div>
 
   <script>
-    const BIN_ID = '68efad29d0ea881f40a4987f';
+    const BIN_ID = '68efb038ae596e708f156632';
     const API_KEY = '$2a$10$jj5y/8wkKDtKzK8xN4ITEuT27TAx4/iKc5qYHz1Kx.eEnYFGdZqBi';
     const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
@@ -56,7 +56,7 @@
           headers: { 'X-Access-Key': API_KEY }
         });
         const data = await res.json();
-        events = data.record || [];
+        events = data.record.events || [];
       } catch (err) {
         console.error('Erreur de chargement :', err);
         events = [];
@@ -71,7 +71,7 @@
             'Content-Type': 'application/json',
             'X-Access-Key': API_KEY
           },
-          body: JSON.stringify(events)
+          body: JSON.stringify({ events })
         });
       } catch (err) {
         console.error('Erreur de sauvegarde :', err);
@@ -119,9 +119,9 @@
       });
     }
 
-    function deleteEvent(index) {
+    async function deleteEvent(index) {
       events.splice(index, 1);
-      saveEvents();
+      await saveEvents();
       renderEvents();
     }
 
